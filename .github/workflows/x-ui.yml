@@ -1,1 +1,37 @@
+name: Run X-UI Panel
 
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/30 * * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io
+          sudo systemctl start docker
+          sudo systemctl enable docker
+
+      - name: Run X-UI Container
+        run: |
+          docker run -d \
+            --name x-ui \
+            -p 54321:54321 \
+            -p 443:443 \
+            -p 80:80 \
+            --restart=always \
+            enwaiax/x-ui:latest
+
+      - name: Keep Alive
+        run: |
+          while true; do
+            echo "Keeping container alive..."
+            sleep 300
+          done
