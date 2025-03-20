@@ -1,1 +1,30 @@
+name: CI
 
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/30 * * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: init
+        run: |
+          sudo apt update
+          sudo apt install wget
+          wget https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh
+          chmod +x install.sh
+          echo "y" | sudo bash install.sh
+          sudo x-ui start
+          curl -s ipinfo.io/ip
+          sudo netstat -tulpn
+          sudo x-ui status
+          
+      - name: Keep alive
+        run: |
+          while true; do
+            date
+            sleep 5m
+          done
